@@ -1,0 +1,10 @@
+<angular-editor [(ngModel)]="instructions" [config]="editorConfig"></angular-editor>
+<button type="button" class="btn btn-primary" routerLink="../../submit/{{type}}" queryParamsHandling="merge" [ngSwitch]="type">
+<div *ngIf="!submissionExists; else submitted">
+  <div *ngIf="type == assignmentTypes.quiz"><i class="fas fa-arrow-right"></i> Take Quiz</div>
+  <div *ngIf="type != assignmentTypes.quiz"><i class="fas fa-plus"></i>Prapare Answer</div>
+</div>
+<ng-template #submitted>
+  View Submissions
+</ng-template>
+          </button>

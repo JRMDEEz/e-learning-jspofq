@@ -1,0 +1,48 @@
+<div class="row no-gutters">
+  <div class="col-12 col-md-3 col-xl-2">
+    <nav class="navbar-expand-md navbar-light bg-light">
+      <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#sidebarContent"
+    aria-controls="sidebarContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+      <div class="collapse navbar-collapse" id="sidebarContent">
+        <div id="accordion" style="width: 100%;">
+          <div class="card " *ngFor="let module of items;let i = index">
+            <div class="card-header clickable" id="headingOne" data-toggle="collapse" [attr.data-target]="'#' + i"
+              aria-expanded="true" (click)="moduleClicked(i)">
+              <h5 class="mb-0">
+                {{module.title}}
+              </h5>
+            </div>
+
+            <div id="{{i}}" class="collapse" data-parent="#accordion">
+
+              <ul class="list-group">
+                <li class="list-group-item clickable" *ngFor="let lesson of module.lessons;let j = index"
+                  (click)="itemClicked(module,lesson)" data-toggle="collapse"
+                  data-target="#sidebarContent.navbar-collapse.show" [ngClass]="{'active':itemPicked.lesson == lesson}">
+                  {{lesson.title}}</li>
+                <li *ngIf="module.lessons == null" class="list-group-item">loading...</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+  </div>
+
+  <div class="col-12 col-md-9 col-xl-8 py-md-3 pl-mg-5">
+    <div class="container">
+      <angular-editor [(ngModel)]="itemPicked.lesson.content" [config]="editorConfig"></angular-editor>
+    </div>
+  </div>
+</div>

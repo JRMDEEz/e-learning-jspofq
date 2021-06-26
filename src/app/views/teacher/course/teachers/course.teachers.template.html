@@ -1,0 +1,108 @@
+<!-- Modal Add User-->
+<div class="modal fade" id="AddModal" tabindex="-1" aria-labelledby="AddModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="UserName or UID" aria-label="UserName or UID" [(ngModel)]="search" aria-describedby="basic-addon2">
+          <div class="input-group-append">
+            <button class="btn btn-outline-success my-2 my-sm-0 input-group-text" type="submit" (click)="searchStudents()"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div [ngSwitch]="modalMode">
+        <section *ngSwitchCase="0">
+          <div class="container" style="margin-top:2rem">
+            <div class="row justify-content-center">
+              <div class="col-auto text-center card">
+                <div style="margin-top: 10px;">
+                  <i class="fas fa-spinner fa-pulse fa-3x" ></i>
+                  <p style="margin-top: 10px;">loading</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section *ngSwitchCase="1">
+          <div class="table-responsive">
+            <table class="table table-fixed">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-8">Name</th>
+                  <th scope="col" class="col-4">uid</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let student of usersList">
+                  <th class="col-1"><input class="position-static" type="checkbox" id="blankCheckbox" value="option1" aria-label="..." (click)="userSelected(student)" [(ngModel)]="student.selected">
+                  </th>
+                  <th class="col-2"><img src="{{student.profile}}" class="profile align-middle" id="dropdownProfileButton"/>
+                  </th>
+                  <td class="col-5">{{student.userName}}</td>
+                  <td class="col-4" style="display:inline-flex">
+                    <p style="overflow:hidden;text-overflow: ellipsis;" class="plaintext">{{student.id}}</p>
+                    <i class="far fa-copy"></i>
+                  </td>
+                </tr>
+                <tr *ngIf="hasNext">
+                  <th class="col-12 align-middle text-center ">
+                    <button class="btn btn-link btn-sm" (click)="getTeachers()">load more</button>
+                  </th>
+                </tr>
+              </tbody>
+
+            </table>
+          </div><!-- End -->
+        </section>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="addTeachers()" data-bs-dismiss="modal">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [ngSwitch]="viewMode">
+  <section *ngSwitchCase="0">
+    <div class="container" style="margin-top:2rem">
+      <div class="row justify-content-center">
+        <div class="col-auto text-center card">
+          <div style="margin-top: 10px;">
+            <i class="fas fa-spinner fa-pulse fa-3x" ></i>
+            <p style="margin-top: 10px;">loading</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section *ngSwitchCase="1">
+    <button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal" data-bs-target="#AddModal" (click)="searchTeachers()"
+>
+  <i class="fas fa-plus"></i> Add
+</button>
+    <table class="table text">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of items">
+          <td>
+            <img src="{{user.profile}}" class="profile align-middle" id="dropdownProfileButton"/>
+          </td>
+          <td class="align-middle">
+            <a routerLink="../../user" [queryParams]="{userId: user.id}">{{user.userName}}</a>
+          </td>
+        </tr>
+    </table>
+  </section>

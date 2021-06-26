@@ -1,0 +1,36 @@
+<div [ngSwitch]="viewMode">
+  <section *ngSwitchCase="0">
+    <div class="container" style="margin-top:2rem">
+      <div class="row justify-content-center">
+        <div class="col-auto text-center card">
+          <div style="margin-top: 10px;">
+            <i class="fas fa-spinner fa-pulse fa-3x" ></i>
+            <p style="margin-top: 10px;">loading</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section *ngSwitchCase="1">
+    <div class="container">
+      <button type="button" class="btn btn-primary" (click)="addModule()">
+  <i class="fas fa-plus"></i> Add
+</button>
+
+      <div class="row thin-gutters">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let module of items">
+          <div class="card item" routerLink="../module/sections" [queryParams]="{courseId: courseId,moduleId: module.id}">
+            <img class="card-img-top thumbnail" src="{{module.thumbnail}}" (load)="module.loaded = true">
+            <div class="card-body">
+              <div>
+                <h6 class="card-title">{{module.title}}</h6>
+                <p class="card-text description">{{module.description}}</p>
+                <p class="card-text">CORE1002 · ICT401</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

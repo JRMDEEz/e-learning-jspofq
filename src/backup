@@ -1,0 +1,11 @@
+TOTAL: {{firebasehelper.realtimeRead + firebasehelper.cacheRead}} | REALTIME:
+{{firebasehelper.realtimeRead}} | SAVED: {{firebasehelper.cacheRead}} |
+{{((firebasehelper.cacheRead / (firebasehelper.realtimeRead +
+firebasehelper.cacheRead) ) *100).toFixed(0)}}% | Lifetime: TOTAL:
+{{firebasehelper.lifetimerealtimeRead + firebasehelper.lifetimecahceRead}} |
+REALTIME: {{firebasehelper.lifetimerealtimeRead}} | SAVED:
+{{firebasehelper.lifetimecahceRead}} | {{((firebasehelper.lifetimecahceRead /
+(firebasehelper.lifetimerealtimeRead + firebasehelper.lifetimecahceRead) )
+*100).toFixed(0)}}%
+
+<router-outlet></router-outlet>

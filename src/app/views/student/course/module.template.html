@@ -1,0 +1,23 @@
+<section id="module">
+  <div class="row max-height no-gutter">
+    <div class="col-12 col-md-2 col-xl-1 bg-light no-gutter">
+      <div class="row max-width no-gutter">
+
+        <div class="card col-2 col-md-1 col-md-12 nav-module-item" routerLinkActive="active" routerLink="start"
+          queryParamsHandling="merge">
+          <p class="center"><i class="fas fa-location-arrow fa-2x"></i></p>
+          <p class="d-none d-md-block">start</p>
+        </div>
+        <div class="card col-2 col-md-1 col-md-12 nav-module-item" routerLinkActive="active"
+          routerLink="assignments/list" queryParamsHandling="merge">
+          <p class="center"><i class="fas fa-file fa-2x"></i></p>
+          <p class="d-none d-md-block">assignments</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-12 col-md-10 col-xl-11 py-md-3 pl-mg-5 content-module">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,104 @@
+<nav id="welcomeNav" class="navbar navbar-expand-md navbar-light bg-light sticky-top" [ngSwitch]="userType">
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <a class="navbar-brand" routerLink="/welcome">
+    <img src="https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png" width="30" height="30" class="d-inline-block align-top" alt="">
+    E-Learning
+  </a>
+
+  <button *ngSwitchCase="0" class="btn btn-outline-success my-2 my-sm-0 d-block d-md-none" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">
+        Login
+      </button>
+  <button *ngSwitchDefault class="btn btn-outline-success my-2 my-sm-0 d-block d-md-none" type="button" (click)="signOut()" data-bs-target="#loginModal">
+        Logout
+      </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent.navbar-collapse.show">
+        <a class="nav-link">FAQ</a>
+      </li>
+      <li class="nav-item" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent.navbar-collapse.show">
+        <a class="nav-link">Enroll Now!</a>
+      </li>
+    </ul>
+
+  </div>
+  <button *ngSwitchCase="0" class="btn btn-outline-success my-2 my-sm-0 d-none d-md-block" type="button" data-bs-toggle="modal" data-bs-target="#loginModal" >
+        Login
+      </button>
+  <button *ngSwitchDefault class="btn btn-outline-success my-2 my-sm-0 d-none d-md-block" type="button" (click)="signOut()" data-bs-target="#loginModal">
+        Logout
+      </button>
+</nav>
+
+<!-- Modal -->
+<!--<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+        <button #closeModal type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="text-center" *ngIf="userType == 1">Account not Registered!</p>
+        <div class="row">
+          <div class="col-md-12"> <a class="btn btn-lg btn-login btn-block btn-outline"
+              (click)="signIn(0)"><img src="https://img.icons8.com/color/16/000000/google-logo.png"><strong> Signin </strong></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>-->
+
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+        <button #closeModal type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="InputEmail1">Email address</label>
+            <input type="email" class="form-control is-invalid" id="Email" aria-describedby="emailHelp" name="email" [(ngModel)]="email" [ngClass]="{'is-invalid':invalidEmailMsg != null}">
+            <div id="validationFeedback" class="invalid-feedback">
+              {{invalidEmailMsg}}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="InputPassword1">Password</label>
+            <input type="password" class="form-control is-invalid" id="Password" name="password" autocomplete="current-password" [(ngModel)]="password" [ngClass]="{'is-invalid':invalidPassMsg != null}">
+            <div id="validationFeedback" class="invalid-feedback">
+              {{invalidPassMsg}}
+            </div>
+          </div>
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="Remember" name="remember"  [(ngModel)]="remember">
+            <label class="form-check-label" for="Remember">Remember Me</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="signIn()">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+<router-outlet></router-outlet>

@@ -1,0 +1,58 @@
+<div [ngSwitch]="viewMode">
+  <section *ngSwitchCase="0">
+    <div class="container" style="margin-top:2rem">
+      <div class="row justify-content-center">
+        <div class="col-auto text-center card">
+          <div style="margin-top: 10px;">
+            <i class="fas fa-spinner fa-pulse fa-3x" ></i>
+            <p style="margin-top: 10px;">loading</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section *ngSwitchCase="1">
+    <div class="row max-height no-gutter">
+      <div class="col-12 col-md-2 col-xl-1 bg-light no-gutter">
+        <div class="row max-width no-gutter">
+          <div class="col-2 col-md-1 col-md-12 nav-module-item-view ">
+            <p class="center"><img src="{{thumbnail}}" class="profile"/>
+            </p>
+            <div class="d-none d-md-block">
+              <p class="line-clamp">{{title}}</p>
+            </div>
+          </div>
+
+          <div class="col-2 col-md-1 col-md-12 nav-module-item" routerLinkActive="active" routerLink="config"
+            queryParamsHandling="merge">
+            <p class="center"><i class="fas fa-cog fa-2x"></i></p>
+            <p class="d-none d-md-block">Configuration</p>
+          </div>
+          <div class="col-2 col-md-1 col-md-12 nav-module-item" routerLinkActive="active" routerLink="modules"
+            queryParamsHandling="merge">
+            <p class="center"><i class="fas fa-location-arrow fa-2x"></i></p>
+            <p class="d-none d-md-block">Start</p>
+          </div>
+          <div class="col-2 col-md-1 col-md-12 nav-module-item" routerLinkActive="active" routerLink="assignments"
+            queryParamsHandling="merge">
+            <p class="center"><i class="fas fa-file fa-2x"></i></p>
+            <p class="d-none d-md-block">Assignments</p>
+          </div>
+          <div class="col-2 col-md-1 col-md-12 nav-module-item" routerLinkActive="active" routerLink="students"
+            queryParamsHandling="merge">
+            <p class="center"><i class="fas fa-user-graduate fa-2x"></i>
+            <p class="d-none d-md-block">Students</p>
+          </div>
+          <div class="col-2 col-md-1 col-md-12 nav-module-item" routerLinkActive="active" routerLink="teachers"
+            queryParamsHandling="merge">
+            <p class="center"><i class="fas fa-user-tie fa-2x"></i>
+            <p class="d-none d-md-block">Teachers</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-10 col-xl-11 py-md-3 pl-mg-5 content-module">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </section>
+</div>

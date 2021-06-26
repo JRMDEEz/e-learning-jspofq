@@ -1,0 +1,96 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Launch demo modal
+</button>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header calendar-selector">
+
+        <div class="dropdown">
+
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{calendar.year}}
+              </button>
+          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" *ngFor="let year of calendar.years" [ngClass]="{'active': calendar.year == year}"
+              (click)="calendar.year = year;refreshCalendar()">{{year}}</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{calendar.months[calendar.month]}}
+              </button>
+          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" [ngClass]="{'active': calendar.month == i}"
+              *ngFor="let month of calendar.months;let i = index"
+              (click)="calendar.month = i;refreshCalendar()">{{month}}</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{calendar.time.hour}}
+              </button>
+          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" [ngClass]="{'active': calendar.time.hour == i +1}"
+              *ngFor="let hr of [].constructor(12);let i = index"
+              (click)="calendar.time.hour = i +1;refreshCalendar()">{{i+1}}</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{calendar.time.minutes}}
+              </button>
+          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" [ngClass]="{'active': calendar.time.minutes == i +1}"
+              *ngFor="let min of [].constructor(60);let i = index"
+              (click)="calendar.time.minutes = i+1;refreshCalendar()">{{i+1}}</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{calendar.time.format}}
+              </button>
+          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" [ngClass]="{'active': calendar.time.format == format}"
+              *ngFor="let format of calendar.format12"
+              (click)="calendar.time.format = format;refreshCalendar()">{{format}}</a>
+          </div>
+        </div>
+        <h6 class="modal-title"></h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetCalendar()" >
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+      </div>
+      <div class="container">
+        <div class="row calendar row-cols-7 no-gutters">
+          <div class="col border">Sun</div>
+          <div class="col border">Mon</div>
+          <div class="col border">Tue</div>
+          <div class="col border">Wed</div>
+          <div class="col border">Thu</div>
+          <div class="col border">Fri</div>
+          <div class="col border">Sat</div>
+
+          <div class="w-100"></div>
+          <ng-container *ngFor="let week of calendar.weeks">
+            <div *ngFor="let day of week.days"
+              [ngClass]="{'active': calendar.selectedDate.day == day && calendar.selectedDate.month == calendar.month && calendar.selectedDate.year == calendar.year ,'clickable' : day != null}"
+              class="col border date"
+              (click)="day != null? calendar.selectedDate.day = day : false; day != null? calendar.selectedDate.month =  calendar.month : false; day != null?calendar.selectedDate.year = calendar.year: false ">
+              {{day}}
+            </div>
+            <div class="w-100"></div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"  (click)="resetCalendar()" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" (click)="dateSelect();resetCalendar()" data-dismiss="modal">{{calendar.months[calendar.selectedDate.month]}} {{calendar.selectedDate.day}},
+          {{calendar.selectedDate.year}}</button>
+      </div>
+    </div>
+  </div>
+</div>

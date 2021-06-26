@@ -1,0 +1,262 @@
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link clickable" [ngClass]="{'active': !resourceTab}" (click)="resourceTab = false">Upload</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link clickable" [ngClass]="{'active': resourceTab}" (click)="resourceTab = true">URL</a>
+        </li>
+      </ul>
+      <div class="modal-body">
+        <div class="form-group" *ngIf="URLMode == undefined; else uploadMode">
+          <div class="file-upload-wrapper">
+            <input
+              type="file" multiple
+              id="input-file-now"
+              class="file-upload maxwidth"
+              (change)="FileInput = $event.target.files"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" [ngSwitch]="resourceTab">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+        <button type="button" class="btn btn-primary" *ngSwitchCase="true">Select</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" *ngSwitchDefault (click)="addFile(FileInput)">Upload</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div [ngSwitch]="viewMode">
+  <section *ngSwitchCase="0">
+    <div class="container" style="margin-top:2rem">
+      <div class="row justify-content-center">
+        <div class="col-auto text-center card">
+          <div style="margin-top: 10px;">
+            <i class="fas fa-spinner fa-pulse fa-3x" ></i>
+            <p style="margin-top: 10px;">loading</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section *ngSwitchCase="1">
+    <!-- Modal Rubric-->
+    <div class="modal fade" id="rubricgradingModal" tabindex="-1" aria-labelledby="rubricModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-md-down">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Rubric</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div *ngIf="assignment.rubric != null" class="modal-body no-gutter">
+            <table class="table table-bordered table-responsive ">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-6 col-md-4" style="min-width:200px ">Criteria
+                  </th>
+                  <th scope="col">pts</th>
+                  <th scope="col" colspan="4">Grading scale
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let rubricItem of assignment.rubric;let i = index">
+                  <td>
+                    <div class="input-group mb-3">
+                      {{rubricItem.criteriaTitle}}
+                    </div>
+                    {{rubricItem.criteriaDescription}}
+                  </td>
+                  <td class="align-middle">{{rubricItem.scale.length > 0
+                    ?rubricItem.scale[rubricItem.scale.length-1].scaleNumber:null}}</td>
+
+                  <td *ngFor="let scaleGr of rubricItem.scale;let j = index" class="align-middle item"
+                    style="min-width:100px" [ngClass]="{'active':selectedScale[i] == j}"
+                    (click)="this.sanitizeRubric();submission.submission.rubric[i] = scaleGr.scaleNumber;refreshSelected()">
+                    {{rubricItem.scale[j].scaleNumber}}<br />
+                  {{rubricItem.scale[j].scaleTitle}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" (click)="resetRubric()">Reset</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" (click)="saveRubric()">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row no-gutter ">
+      <div class="col-12 col-md">
+        <h3>Instructions</h3>
+        <angular-editor [(ngModel)]="assignment.instructions" class="mb-3" [config]="editorConfig"></angular-editor>
+        <div [ngSwitch]="assignment.type">
+          <section *ngSwitchCase="assignmentTypes.dropbox">
+            <ul class="list-group">
+              <li class="list-group-item" *ngFor="let file of submission.files; let i = index">
+                <div class="row no-gutters">
+                  <div class="col">
+                    <a *ngIf="file.url != null;else filename" href="{{file.url}}" target="_blank"
+                      rel="noopener noreferrer">{{file.name}} ({{file.size}})</a>
+                    <ng-template #filename>
+                      <div>{{file.name}} ({{file.size}})</div>
+                    </ng-template>
+
+                    <div class="progress" *ngIf="file.url == undefined">
+                      <div class="progress-bar" role="progressbar" aria-valuenow="0"
+                        [ngStyle]="{'width': file.progress}"
+                        [ngClass]="{'progress-bar-striped progress-bar-animated' : file.progress == '100%' && file.url == undefined}"
+                        aria-valuemin="0" aria-valuemax="100">
+                        <ng-template *ngIf="file.progress != '100%';else uploading">
+                          {{file.progress}}
+                        </ng-template>
+                        <ng-template #uploading>
+                          Uploaded! wait...
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </section>
+          <section *ngSwitchCase="assignmentTypes.essay">
+            <angular-editor [(ngModel)]="submission.essay" class="mb-3" [config]="editorConfig">
+            </angular-editor>
+          </section>
+        </div>
+
+      </div>
+      <div class="col-12 col-md-auto no-gutter">
+        <div class="card mb-3">
+          <div class="list-group list-group-flush thin ">
+            <div class="list-group-item justify-content-center" style="display: inline-flex;">
+              <img
+        src="https://firebasestorage.googleapis.com/v0/b/e-learning-88aa0.appspot.com/o/assets%2Fdefault-user.png?alt=media&token=ae184283-9555-45ed-bf96-9cab7391f4bc"
+        data-bs-toggle="dropdown"
+        class="profile"
+        id="dropdownProfileButton"
+      />
+              <button type="button" class="btn btn-link" (click)="previousSubmission()" [disabled]="submission.submission.score > assignment.maxScore || selectedStudent == 0">
+        <i class="fas fa-chevron-left fa-lg"></i>
+      </button>
+
+              <div class="dropdown">
+                <a class="btn btn-outline-secondary dropdown-toggle" role="button" id="students"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  {{students[selectedStudent].userName}}
+                </a>
+
+                <ul class="dropdown-menu scrollable-menu" aria-labelledby="students">
+                  <li *ngFor="let student of students;let i = index"><a class="dropdown-item" [routerLink]="[]"
+                      queryParamsHandling="merge" (click)="selectedStudent = i"
+                      [queryParams]="{submissionId: student.id }"
+                      [ngClass]="{'active': selectedStudent == i}">{{student.userName}}</a>
+                  </li>
+                </ul>
+              </div>
+              <button type="button" class="btn btn-link" (click)="nextSubmission()" [disabled]="submission.submission.score > assignment.maxScore || selectedStudent == students.length -1">
+        <i class="fas fa-chevron-right fa-lg"></i>
+      </button>
+            </div>
+            <div class="list-group-item justify-content-center" style="display: inline-flex" *ngIf="submission != null">
+
+              <button type="button" class="btn btn-link" [disabled]="submission.submission.score > assignment.maxScore">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+              <div class="card align-middle">
+                <div class="input-group">
+                  <button class="btn btn-link" type="button" id="flag" data-bs-toggle="dropdown" aria-expanded="false" [ngSwitch]="submission.submission.flags" [disabled]="submission.submission.score > assignment.maxScore">
+                    <div *ngSwitchCase="flags.missing"><i class="far fa-circle" style="color:tomato"></i></div>
+                    <div *ngSwitchCase="flags.incomplete"><i class="fas fa-adjust" style="color:orange"></i></div>
+                    <div *ngSwitchCase="flags.absent"><i class="fas fa-user-times" style="color:red"></i></div>
+                    <div *ngSwitchCase="flags.excused"><i class="fas fa-times" style="color:yellowgreen"></i></div>
+                    <div *ngSwitchDefault><i class="fas fa-flag" style="color:tomato" *ngIf="submission.submission.flags == null"></i></div>
+                    </button>
+                  <span *ngIf="assignment.rubric != null;else grade">
+                  <button class="btn btn-link" type="button" id="rubric"  data-bs-toggle="modal" data-bs-target="#rubricgradingModal">
+                    <span *ngIf="submission.submission.score == null"><i  class="fas fa-columns" style="color:orange"></i></span>
+                  <span *ngIf="submission.submission.score != null">{{submission.submission.score}}</span></button>
+
+                  </span>
+                  <ng-template #grade>
+                    <input size="1" style="text-align:right;width:60px" class="form-control plaininput no-gutter" (input)="editmode? false : editmode = true" type="number" placeholder="none" [(ngModel)]="submission.submission.score" [ngClass]="{'is-invalid' : submission.submission.score > assignment.maxScore}">
+                    <div class="invalid-tooltip">
+                      Invalid
+                    </div>
+                  </ng-template>
+                  <button *ngIf="editmode && submission.submission.score <= assignment.maxScore" class="btn btn-link btn-sm"(click)="submitDropbox()" type="button" id="confirm">
+                    ok
+                    </button>
+                  <ul class="dropdown-menu" aria-labelledby="flag">
+                    <li><a class="dropdown-item" (click)="setFlag(flags.missing)"
+                        *ngIf="submission.submission.flags != flags.missing"><i class="far fa-circle" style="color:tomato"></i>
+                        Missing</a></li>
+                    <li><a class="dropdown-item" (click)="setFlag(flags.incomplete)"
+                        *ngIf="submission.submission.flags != flags.incomplete"><i class="fas fa-adjust" style="color:orange"></i>
+                        Incomplete</a></li>
+                    <li><a class="dropdown-item" (click)="setFlag(flags.absent)"
+                        *ngIf="submission.submission.flags != flags.absent"><i class="fas fa-user-times" style="color:red"></i>
+                        Absent</a></li>
+                    <li><a class="dropdown-item" (click)="setFlag(flags.excused)"
+                        *ngIf="submission.submission.flags != flags.excused"><i class="fas fa-times" style="color:yellowgreen" ></i>
+                        Excused</a></li>
+                    <li *ngIf="submission.submission.flags != null">
+                      <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" (click)="setFlag(null)"
+                        *ngIf="submission.submission.flags != null">Clear</a></li>
+                  </ul>
+                </div>
+
+              </div>
+              <div class="align-middle" style="padding-left:5px;padding-top:8px;padding-bottom:8px">
+                <p class="plaintext">
+                  /{{assignment.maxScore}}
+                </p>
+              </div>
+              <button type="button" class="btn btn-link" [disabled]="submission.submission.score > assignment.maxScore">
+        <i class="fas fa-arrow-right"></i>
+      </button>
+            </div>
+            <div class="list-group-item">
+              <p class="mb-1">
+                <i class="fas fa-file-export" [ngStyle]="{'color': submission.submission.createdAt <= assignment.due && submitted != null? 'yellowgreen': 'tomato'}"></i>
+                Submitted:
+                <span [ngStyle]="{'color': submission.submission.createdAt <= assignment.due? '': 'tomato'}"> {{submitted == null? 'not yet': submitted}}</span>
+              </p>
+            </div>
+            <div class="list-group-item">
+              <p class="mb-1">
+                <i class="fas fa-sync-alt"></i> Attempts: {{submission.submission.attempts == null? 'none':
+                submission.submission.attempts}}
+              </p>
+            </div>
+            <div class="list-group-item">
+              <p class="mb-1">
+                <i class="fas fa-redo-alt"></i> Max attempts: {{assignment.maxAttempts == null? 'unlimited':
+                assignment.maxAttempts}}
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>

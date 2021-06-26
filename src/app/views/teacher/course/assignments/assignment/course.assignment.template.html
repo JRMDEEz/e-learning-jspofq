@@ -1,0 +1,434 @@
+<!-- Modal Discard-->
+<div class="modal fade" id="discardModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Discarding Changes...</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Do you want to discard changes?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="discardChanges()" data-bs-dismiss="modal">Discard</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Delete-->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Deleting Assignment</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Do you want to DELETE Assignment?
+        you cannot retreive this later!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="deleteAssignment()"  data-bs-dismiss="modal">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Calendar -->
+<div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header calendar-selector">
+
+        <div class="dropdown">
+
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{calendar.year}}
+              </button>
+          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" *ngFor="let year of calendar.years" [ngClass]="{'active': calendar.year == year}"
+              (click)="calendar.year = year;refreshCalendar()">{{year}}</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{calendar.months[calendar.month]}}
+              </button>
+          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" [ngClass]="{'active': calendar.month == i}"
+              *ngFor="let month of calendar.months;let i = index"
+              (click)="calendar.month = i;refreshCalendar()">{{month}}</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{calendar.time.hour}}
+              </button>
+          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" [ngClass]="{'active': calendar.time.hour == i +1}"
+              *ngFor="let hr of [].constructor(12);let i = index"
+              (click)="calendar.time.hour = i +1;refreshCalendar()">{{i+1}}</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{calendar.time.minutes}}
+              </button>
+          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" [ngClass]="{'active': calendar.time.minutes == i}"
+              *ngFor="let min of [].constructor(60);let i = index"
+              (click)="calendar.time.minutes = i+1;refreshCalendar()">{{i}}</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{calendar.time.format}}
+              </button>
+          <div class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" [ngClass]="{'active': calendar.time.format == format}"
+              *ngFor="let format of calendar.format12"
+              (click)="calendar.time.format = format;refreshCalendar()">{{format}}</a>
+          </div>
+        </div>
+        <h6 class="modal-title"></h6>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="resetCalendar()" >
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+      </div>
+      <div class="container">
+        <div class="row calendar row-cols-7 no-gutters">
+          <div class="col border">Sun</div>
+          <div class="col border">Mon</div>
+          <div class="col border">Tue</div>
+          <div class="col border">Wed</div>
+          <div class="col border">Thu</div>
+          <div class="col border">Fri</div>
+          <div class="col border">Sat</div>
+
+          <div class="w-100"></div>
+          <ng-container *ngFor="let week of calendar.weeks">
+            <div *ngFor="let day of week.days"
+              [ngClass]="{'active': calendar.selectedDate.day == day && calendar.selectedDate.month == calendar.month && calendar.selectedDate.year == calendar.year ,'clickable' : day != null}"
+              class="col border date"
+              (click)="day != null? calendar.selectedDate.day = day : false; day != null? calendar.selectedDate.month =  calendar.month : false; day != null?calendar.selectedDate.year = calendar.year: false ">
+              {{day}}
+            </div>
+            <div class="w-100"></div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"  (click)="resetCalendar()" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" (click)="dateSelect();resetCalendar()" data-bs-dismiss="modal">{{calendar.months[calendar.selectedDate.month]}} {{calendar.selectedDate.day}},
+          {{calendar.selectedDate.year}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div [ngSwitch]="viewMode">
+  <section *ngSwitchCase="0">
+    <div class="container" style="margin-top:2rem">
+      <div class="row justify-content-center">
+        <div class="col-auto text-center card">
+          <div style="margin-top: 10px;">
+            <i class="fas fa-spinner fa-pulse fa-3x" ></i>
+            <p style="margin-top: 10px;">loading</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section *ngSwitchCase="1">
+
+    <!-- Modal Rubric-->
+    <div class="modal fade" id="rubricModal" tabindex="-1" aria-labelledby="rubricModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-md-down">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Rubric</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div *ngIf="assignment.rubric != null" class="modal-body no-gutter">
+            <table class="table table-bordered table-responsive ">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-6 col-md-4" style="min-width:200px ">Criteria
+                    <span class="clickable" (click)="addCriteria()">
+                      <i class="fas fa-plus-circle fa-lg"  style="color:limegreen"></i>
+                    </span>
+                  </th>
+                  <th scope="col">pts</th>
+                  <th scope="col" colspan="4">Grading scale
+                    <span class="clickable" (click)="addScale()">
+                      <i class="fas fa-plus-circle fa-lg"  style="color:limegreen" ></i>
+                    </span>
+                    <span class="clickable" (click)="removeScale()">
+                      <i class="fas fa-minus-circle fa-lg" style="color:tomato"></i>
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let rubricItem of assignment.rubric;let i = index">
+                  <td>
+                    <div class="input-group mb-3">
+                      <input type="text" class="form-control " placeholder="Criteria" aria-label="Criteria"
+    [(ngModel)]="rubricItem.criteriaTitle">
+                      <button  class="btn btn-link "(click)="removeCriteria(i)" type="button" id="confirm">
+  <i class="fas fa-trash" style="color:tomato"></i>
+  </button>
+                    </div>
+                    <textarea type="text" rows="4" class="form-control" placeholder="Description" [(ngModel)]="rubricItem.criteriaDescription"></textarea>
+                  </td>
+                  <td class="align-middle">{{rubricItem.scale.length > 0
+                    ?rubricItem.scale[rubricItem.scale.length-1].scaleNumber:null}}</td>
+
+                  <td *ngFor="let scaleGr of rubricItem.scale;let j = index" class="align-middle"
+                    style="min-width:130px">
+                    <input type="number" class="form-control" placeholder="pts" aria-label="pts" [(ngModel)]="rubricItem.scale[j].scaleNumber"><br />
+                    <input type="text" class="form-control" placeholder="pts" aria-label="pts" [(ngModel)]="rubricItem.scale[j].scaleTitle">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+Close
+</button>
+            <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" (click)="saveRubric()">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal GradingStyle-->
+    <div class="modal fade" id="changeGradeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">changing from {{assignment.rubric == null? 'Max
+              Grade':'Rubric'}} to {{assignment.rubric !=
+              null?
+              'Max Grade':'Rubric'}}</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+          </div>
+          <div class="modal-body">
+            Do you want to change from {{assignment.rubric == null? 'Max Grade':'Rubric'}} to {{assignment.rubric !=
+            null?
+            'Max Grade':'Rubric'}}?<br>
+            <span *ngIf="graded != 0" style="color:tomato">may cause inconsistency on grading!</span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+            <button type="button" class="btn btn-primary" (click)="changeGradingStyle()" data-bs-dismiss="modal">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h6>Assignment</h6>
+    <div class="form-group" *ngIf="assignment != null">
+      <div class="input-group flex-nowrap">
+        <input [ngClass]="{'form-control-plaintext': !editmode,'form-control':editmode}"
+    [readonly]="!editmode" type="text" class="form-control" placeholder="Enter Title" [(ngModel)]="assignment.title" >
+
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+  <i class="fas fa-trash"></i>Delete
+</button>
+      </div>
+    </div>
+    <div class="row no-gutters">
+      <div class="col">
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': isHomeRoute()}" routerLink="../assignment"
+              queryParamsHandling="merge">Assignment</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLinkActive="active" [routerLink]="!editmode ? 'submissions' : null"
+              [ngClass]="{'disabled': editmode}" queryParamsHandling="merge">Submissions</a>
+          </li>
+          <li class="nav-item" *ngIf="assignment.type == assignmentType.quiz">
+            <a class="nav-link" routerLinkActive="active" [routerLink]="!editmode ? 'submissions' : null"
+              [ngClass]="{'disabled': editmode}" queryParamsHandling="merge">Questions</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-auto border-bottom">
+        <button type="button" class="btn btn-primary"  *ngIf="editmode" data-bs-toggle="modal" data-bs-target="#discardModal">
+  <i class="fas fa-trash"></i><p class="d-none d-md-inline plaintext"> Discard</p>
+</button>
+        <button *ngIf="isHomeRoute()" type="button" class="btn btn-primary" (click)="editOrSave()" [disabled]="editmode && (assignment.maxScore == null && assignment.start != null ||assignment.start > assignment.due && assignment.due != null)">
+  <div *ngIf="!editmode; else save">
+    <i class="fas fa-pencil-alt"></i><p class="d-none d-md-inline plaintext"> Edit</p>
+  </div>
+  <ng-template #save><div><i class="fas fa-save "></i><p class="d-none d-md-inline plaintext"> Save</p></div></ng-template
+  >
+          </button>
+      </div>
+    </div>
+    <div [ngSwitch]="isHomeRoute()">
+      <router-outlet *ngSwitchCase="false"></router-outlet>
+      <div *ngSwitchCase="true">
+        <div class="row no-gutter">
+          <div class="col-12 col-md">
+            <h3>Instructions</h3>
+            <angular-editor *ngIf="assignment != null" [(ngModel)]="assignment.instructions" [config]="editorConfig">
+            </angular-editor>
+
+          </div>
+          <div class="col-12 col-md-auto no-gutter">
+            <div class="card mb-3">
+              <div class="list-group list-group-flush thin ">
+                <div class="list-group-item">
+                  <p class="mb-1">Assignment</p>
+                </div>
+                <div class="list-group-item">
+                  <p class="mb-1"> <i class="fas {{assignmentIcon[assignment.type].icon}}"></i> Type:
+                    {{assignment.type}}</p>
+                </div>
+                <div class="list-group-item input">
+                  <div class="input-group flex-nowrap">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text plaininput" id="addon-wrapping"><p>
+                        <span *ngIf="assignment.rubric == null"><i  class="fas fa-chart-bar"></i></span>
+                      <span *ngIf="assignment.rubric != null"><i class="fas fa-columns" style="color:orange"></i></span>
+                      Max Grade:</p></span>
+                    </div>
+                    <input style="width:50px" [ngClass]="{'form-control-plaintext': !editmode,'form-control':editmode,'viewonly':assignment.rubric != null,'is-invalid':(assignment.maxScore == null && assignment.start != null)|| assignment.maxScore == null}"
+    [readonly]="!editmode || assignment.rubric != null" type="number" placeholder="none" [(ngModel)]="assignment.maxScore"
+    [attr.data-bs-toggle]="assignment.rubric != null && editmode ? 'modal' : ''" data-bs-target="#rubricModal">
+                    <div class="input-group-append clickable" *ngIf="editmode">
+                      <span class="input-group-text" id="addon-wrapping" data-bs-toggle="modal" data-bs-target="#changeGradeModal">
+                      <span *ngIf="assignment.rubric != null"><i class="fas fa-chart-bar"></i></span>
+                      <span *ngIf="assignment.rubric == null"><i class="fas fa-columns" style="color:orange"></i></span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="invalid-tooltip">
+                    Required
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card mb-3">
+              <div class="list-group list-group-flush thin">
+                <div class="list-group-item">
+                  <p class="mb-1" style="float: left;">Schedule</p>
+
+                </div>
+                <div class="list-group-item input">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text plaininput" id="addon-wrapping"><p><i class="far fa-calendar-alt"></i> Start:</p></span>
+                    </div>
+                    <input (click)="changeDate = 0" [ngClass]="{'form-control-plaintext': !editmode,'form-control viewonly':editmode}" [attr.data-bs-toggle]="editmode ? 'modal' : ''" data-bs-target="#calendarModal"
+    readonly type="text" placeholder="not started" [(ngModel)]="start">
+                    <div class="input-group-append clickable" *ngIf="editmode">
+                      <span class="input-group-text" id="addon-wrapping" (click)="assignment.start = null;refreshDateUI()"><i class="fas fa-times" ></i></span>
+                    </div>
+                    <div class="invalid-tooltip">
+                      Invalid
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item input">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text plaininput" id="addon-wrapping"><p><i class="far fa-calendar-times"></i> Due:</p></span>
+                    </div>
+                    <input (click)="changeDate = 1"  [ngClass]="{'form-control-plaintext': !editmode,'form-control viewonly':editmode,'is-invalid' : assignment.start > assignment.due && assignment.due != null}" [attr.data-bs-toggle]="editmode ? 'modal' : ''" data-bs-target="#calendarModal"
+    readonly type="text" placeholder="none" [(ngModel)]="due">
+                    <div class="input-group-append clickable" *ngIf="editmode">
+                      <span class="input-group-text" id="addon-wrapping" (click)="assignment.due = null;refreshDateUI()"><i class="fas fa-times" ></i></span>
+                    </div>
+                    <div class="invalid-tooltip">
+                      Invalid
+                    </div>
+                  </div>
+                </div>
+                <div class="list-group-item input">
+                  <div class="input-group flex-nowrap">
+                    <span class="input-group-text plaininput" id="addon-wrapping"><p>
+                    <i class="fas" [ngClass]="{'fa-check': given,'fa-times':!given}" [ngStyle]="{'color': given? 'yellowgreen': 'tomato'}"></i> Given</p></span>
+                    <button class="btn btn-link btn-sm" style="float: right;" [ngStyle]="{'color': given && assignment.maxScore != null? '': 
+                      (assignment.maxScore == null && assignment.start != null)|| assignment.maxScore == null? 'tomato':   
+                      timeNow > assignment.due && assignment.due != null? 'tomato' : '' }" (click)=" given && assignment.maxScore != null? take(): 
+                      (assignment.maxScore == null && assignment.start != null)|| assignment.maxScore == null? false:   
+                      timeNow > assignment.due && assignment.due != null? false : giveNow() ">{{
+                      given && assignment.maxScore != null? 'take': 
+                      (assignment.maxScore == null && assignment.start != null)|| assignment.maxScore == null? 'max grade required':   
+                      timeNow > assignment.due && assignment.due != null?  'past due date' : 'give now' }}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card mb-3">
+              <div class="list-group list-group-flush thin ">
+                <div class="list-group-item">
+                  <p class="mb-1">Grading</p>
+                </div>
+                <div class="list-group-item">
+                  <p class="mb-1"> <i class="fas fa-pencil-alt"></i> {{toGrade}} to grade</p>
+                </div>
+                <div class="list-group-item">
+                  <p class="mb-1"> <i class="fas fa-chart-pie"></i> Due: {{studentDue}}, Submitted: {{studentSubmitted}}
+                  </p>
+                </div>
+                <div class="list-group-item">
+                  <p class="mb-1"> <i class="fas fa-file-contract" style="color: yellowgreen;"></i> Graded: {{graded}}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card mb-3">
+              <div class="list-group list-group-flush thin ">
+                <div class="list-group-item">
+                  <p class="mb-1">Options</p>
+                </div>
+                <div class="list-group-item input">
+                  <div class="input-group flex-nowrap">
+                    <span class="input-group-text plaininput" id="addon-wrapping"><p>
+                    <i class="fas fa-clock" [ngStyle]="{'color': assignment.allowLate? 'yellowgreen': 'tomato'}"></i> allow late submissions? </p></span>
+                    <span *ngIf="!editmode" class="input-group-text plaininput" id="addon-wrapping"><p>{{assignment.allowLate? 'yes': 'no'}}</p></span>
+                    <button *ngIf="editmode" class="btn btn-link btn-sm" style="float: right;" (click)="assignment.allowLate = !assignment.allowLate">{{assignment.allowLate? 'yes': 'no'}}</button>
+                  </div>
+                </div>
+                <div class="list-group-item input">
+                  <div class="input-group flex-nowrap">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text plaininput" id="addon-wrapping"><p><i class="fas fa-redo-alt"></i> Attempts:</p></span>
+                    </div>
+                    <input size="1" [ngClass]="{'form-control-plaintext': !editmode,'form-control':editmode}"
+    [readonly]="!editmode" type="number" placeholder="unlimited" [(ngModel)]="assignment.maxAttempts">
+                  </div>
+                </div>
+                <div class="list-group-item input">
+                  <div class="input-group flex-nowrap">
+                    <span class="input-group-text plaininput" id="addon-wrapping"><p>
+                    <i class="fas {{assignment.visible? 'fa-eye': 'fa-eye-slash'}}" [ngStyle]="{'color': assignment.visible? 'yellowgreen': 'tomato'}"></i> Visible:</p></span>
+                    <span *ngIf="!editmode" class="input-group-text plaininput" id="addon-wrapping"><p>{{assignment.visible? 'yes': 'no'}}</p></span>
+                    <button *ngIf="editmode" class="btn btn-link btn-sm" style="float: right;" (click)="assignment.visible = !assignment.visible">{{assignment.visible? 'yes': 'no'}}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

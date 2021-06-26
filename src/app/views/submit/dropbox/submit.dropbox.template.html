@@ -1,0 +1,77 @@
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link clickable" [ngClass]="{'active': !resourceTab}" (click)="resourceTab = false">Upload</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link clickable" [ngClass]="{'active': resourceTab}" (click)="resourceTab = true">URL</a>
+        </li>
+      </ul>
+      <div class="modal-body">
+        <div class="form-group" *ngIf="URLMode == undefined; else uploadMode">
+          <div class="file-upload-wrapper">
+            <input
+              type="file" multiple
+              id="input-file-now"
+              class="file-upload maxwidth"
+              (change)="FileInput = $event.target.files"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" [ngSwitch]="resourceTab">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+        <button type="button" class="btn btn-primary" *ngSwitchCase="true">Select</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" *ngSwitchDefault (click)="addFile(FileInput)">Upload</button>
+      </div>
+    </div>
+  </div>
+</div>
+<h1>Instructions</h1>
+<angular-editor [(ngModel)]="instructions" [config]="editorConfig"></angular-editor>
+<ul class="list-group">
+  <li class="list-group-item" *ngFor="let upload of uploadList; let i = index">
+    <div class="row no-gutters">
+      <div class="col">
+        <a *ngIf="upload.url != null;else filename" href="{{upload.url}}" target="_blank"
+          rel="noopener noreferrer">{{upload.name}} ({{upload.size}})</a>
+        <ng-template #filename>
+          <div>{{upload.name}} ({{upload.size}})</div>
+        </ng-template>
+        <div class="progress" *ngIf="upload.url == undefined">
+          <div class="progress-bar" role="progressbar" aria-valuenow="0" [ngStyle]="{'width': upload.progress}"
+            [ngClass]="{'progress-bar-striped progress-bar-animated' : upload.progress == '100%' && upload.url == undefined}"
+            aria-valuemin="0" aria-valuemax="100">
+            <ng-template *ngIf="upload.progress != '100%';else uploading">
+              {{upload.progress}}
+            </ng-template>
+            <ng-template #uploading>
+              Uploaded! wait...
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="clickable" (click)="removeFile(i)">
+          <i class="fas fa-times fa-lg" ></i>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>
+
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+  <i class="fas fa-upload"></i> Upload File
+</button>
+<button type="button" class="btn btn-primary" (click)="SubmitSubmission()">
+  <i class="fas fa-save"></i> Save and Submit
+</button>

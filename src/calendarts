@@ -1,0 +1,102 @@
+calendar = {
+    time: {
+      hour: new Date().getHours(),
+      minutes: new Date().getMinutes(),
+      format: null
+    },
+    year: new Date().getFullYear(),
+    month: new Date().getMonth(),
+    day: new Date().getDate(),
+    years: [],
+    months: [
+      'January',
+      'Febuary',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ],
+    format12: ['am', 'pm'],
+    selectedDate: {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth(),
+      day: new Date().getDate()
+    },
+
+    weeks: []
+  };
+  refreshCalendar() {
+    var year = this.calendar.year;
+    this.calendar.weeks = [];
+    var month = this.calendar.month;
+    var maxdays = new Date(year, month + 1, 0).getDate();
+    var start = new Date(year, month, 1).getDay();
+    var days = [];
+    for (let i = 0; i < maxdays; i++) {
+      if (i == 0) {
+        for (let j = 0; j < start; j++) {
+          days.push(null);
+        }
+      }
+      days.push(i + 1);
+      if (days.length >= 7 || i + 1 >= maxdays) {
+        if (days.length < 7) {
+          var filler = 7 - days.length;
+          for (let k = 1; k <= filler; k++) {
+            days.push(null);
+          }
+        }
+        this.calendar.weeks.push({ days: days });
+        days = [];
+      }
+    }
+  }
+  initCalendar() {
+    var H = new Date().getHours();
+    var h = H % 12 || 12;
+    var ampm = H < 12 || H === 24 ? 'am' : 'pm';
+    this.calendar.time.hour = h;
+    this.calendar.time.format = ampm;
+    var year = this.calendar.year;
+    for (let i = year - 15; i < year + 10; i++) {
+      this.calendar.years.push(i);
+    }
+    this.refreshCalendar();
+  }
+  resetCalendar() {
+    var H = new Date().getHours();
+    var h = H % 12 || 12;
+    var ampm = H < 12 || H === 24 ? 'am' : 'pm';
+    this.calendar.time.hour = h;
+    this.calendar.time.format = ampm;
+    this.calendar.time.minutes = new Date().getMinutes();
+    console.log('resetting');
+    this.calendar.year = new Date().getFullYear();
+    this.calendar.month = new Date().getMonth();
+    this.calendar.day = new Date().getDate();
+
+    this.calendar.selectedDate.year = new Date().getFullYear();
+    this.calendar.selectedDate.month = new Date().getMonth();
+    this.calendar.selectedDate.day = new Date().getDate();
+    this.refreshCalendar();
+  }
+  dateSelect() {
+    var selectedDate = new Date(
+      this.calendar.selectedDate.year,
+      this.calendar.selectedDate.month,
+      this.calendar.selectedDate.day,
+      this.calendar.time.format == 'pm'
+        ? this.calendar.time.hour + 12
+        : this.calendar.time.hour,
+      this.calendar.time.minutes
+    );
+    const datepipe: DatePipe = new DatePipe('en-US');
+    var formattedDate = datepipe.transform(selectedDate, 'd MMMM yyyy, h:mm a');
+    console.log(formattedDate);
+  }

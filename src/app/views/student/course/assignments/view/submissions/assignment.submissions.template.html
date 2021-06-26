@@ -1,0 +1,14 @@
+<div [ngSwitch]="resourceTab">
+  <!-- dropbox view -->
+  <div *ngSwitchCase="2">
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let upload of uploadList; let i = index">
+        <div class="row no-gutters">
+          <div class="col"> 
+            <a href="{{upload.url}}" target="_blank">{{upload.name}}</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

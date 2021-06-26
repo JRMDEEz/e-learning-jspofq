@@ -1,0 +1,87 @@
+<div [ngSwitch]="viewMode">
+  <section *ngSwitchCase="0">
+    <div class="container" style="margin-top:2rem">
+      <div class="row justify-content-center">
+        <div class="col-auto text-center card">
+          <div style="margin-top: 10px;">
+            <i class="fas fa-spinner fa-pulse fa-3x" ></i>
+            <p style="margin-top: 10px;">loading</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section *ngSwitchCase="1">
+    <div class="dropdown">
+
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    {{filterByDisplay[filterBy]}}
+  </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" (click)="filterBy = FilterBy.all;refreshList()"
+          *ngIf="filterBy != FilterBy.all">All</a>
+        <a class="dropdown-item" (click)="filterBy = FilterBy.submitted;refreshList()"
+          *ngIf="filterBy != FilterBy.submitted">Submitted</a>
+        <a class="dropdown-item" (click)="filterBy = FilterBy.notSubmitted;refreshList()"
+          *ngIf="filterBy != FilterBy.notSubmitted">Not submitted</a>
+      </div>
+    </div>
+    <table class="table text">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col"></th>
+          <th scope="col" class="text-center ">Grade</th>
+          <th scope="col" class="text-center ">Submitted</th>
+          <th scope="col" class="text-center d-none d-md-table-cell">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let submission of items">
+          <td>
+            <img src="{{submission.profile}}" class="profile align-middle" id="dropdownProfileButton"/>
+          </td>
+          <td class="align-middle">
+            <a routerLink="../../../user" [queryParams]="{userId: submission.id}">{{submission.userName}}</a>
+          </td>
+          <td class="text-center align-middle">
+            <div routerLink="../submission" [queryParams]="{submissionId: submission.id}" queryParamsHandling="merge"
+              class="clickable">
+              <i class="fa-lg" [ngClass]="submission.submitted == null? 'far fa-file':  submission.score == null?'fas fa-pencil-alt' : 'fas fa-file-alt'" [ngStyle]="{'color': submission.score == null && submission.submitted != null? 'yellowgreen': ''}"></i>
+            </div>
+          </td>
+
+          <td class="text-center align-middle  due">
+            <div *ngIf="due != null;else noDue">
+              <div *ngIf="submission.submitted != null;else notSubmitted">
+                <div [ngStyle]="{'color': submission.submitted.milis <= due? '': 'tomato'}">
+                  <p class="date">
+                    {{submission.submitted.date}}</p>
+                  <p class="time">
+                    {{submission.submitted.time}}
+                  </p>
+                </div>
+              </div>
+              <ng-template #notSubmitted>
+                <div *ngIf='timenow >= due'>
+                  <i class="fas fa-exclamation-triangle fa-lg" style="color: tomato;"></i>
+                </div>
+              </ng-template>
+            </div>
+            <ng-template #noDue>
+              <div *ngIf="submission.submitted != null">
+                <p class="date">
+                  {{submission.submitted.date}}</p>
+                <p class="time">
+                  {{submission.submitted.time}}
+                </p>
+              </div>
+            </ng-template>
+          </td>
+          <td class="text-center align-middle d-none d-md-table-cell">
+            {{submission.score}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>

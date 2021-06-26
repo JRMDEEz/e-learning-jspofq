@@ -1,0 +1,36 @@
+<table class="table text">
+  <thead>
+    <tr>
+      <th scope="col">Assignment</th>
+      <th scope="col" class="text-center d-none d-md-table-cell">Due</th>
+      <th scope="col" class="text-center d-none d-md-table-cell">Graded</th>
+      <th scope="col" class="text-center ">Score</th>
+      <th scope="col" class="text-center">Grade</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let assignment of items">
+      <td class="align-middle"><i class="fas {{assignment.type}} fa-lg"></i> <a routerLink="../view"
+          queryParamsHandling="merge" [queryParams]="{assignmentId: assignment.id }">{{assignment.title}}</a></td>
+      <td class="due text-center align-middle d-none d-md-table-cell">
+        <div *ngIf="assignment.due != null">
+          <p class="date">
+            {{assignment.due.date}}</p>
+          <p class="time">
+            {{assignment.due.time}}
+          </p>
+        </div>
+      </td>
+      <td class="text-center align-middle d-none d-md-table-cell"><i class="fas fa-check fa-lg"></i></td>
+
+      <td class="text-center  align-middle">?/{{assignment.maxScore}}</td>
+      <td class="text-center  align-middle"></td>
+    </tr>
+    <tr>
+      <td class="overall align-middle d-none d-md-table-cell" colspan="3">Overall Result
+      <td class="overall align-middle d-table-cell d-md-none" colspan="1">Overall Result
+      </td>
+      <td class="text-center  align-middle">87%</td>
+      <td class="text-center  align-middle">2.0</td>
+    </tr>
+</table>
